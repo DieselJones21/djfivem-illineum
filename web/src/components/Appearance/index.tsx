@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useTransition as useTransitionAnimation, animated } from 'react-spring';
 import { useNuiState } from '../../hooks/nuiState';
 import Nui from '../../Nui';
 
@@ -53,24 +52,6 @@ const Appearance = () => {
   const [exitModal, setExitModal] = useState(false);
 
   const { display, setDisplay, locales, setLocales } = useNuiState();
-
-  const wrapperTransition = useTransitionAnimation(display.appearance, null, {
-    from: { transform: 'translateX(-50px)', opacity: 0 },
-    enter: { transform: 'translateY(0)', opacity: 1 },
-    leave: { transform: 'translateX(-50px)', opacity: 0 },
-  });
-
-  const saveModalTransition = useTransitionAnimation(saveModal, null, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-
-  const exitModalTransition = useTransitionAnimation(exitModal, null, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
 
   const handleTurnAround = useCallback(() => {
     Nui.post('appearance_turn_around');
@@ -516,10 +497,8 @@ const Appearance = () => {
 
   return (
     <>
-      {wrapperTransition.map(
-        ({ item, key, props: style }) =>
-          item && (
-            <animated.div key={key} style={style}>
+      {display.appearance && (
+        <div className="appearance-enter">
               <Wrapper>
                 <Container>
                   <PanelHeader>
@@ -637,13 +616,10 @@ const Appearance = () => {
                   enableExit={config.enableExit}
                 />
               </Wrapper>
-            </animated.div>
-          ),
+        </div>
       )}
-      {saveModalTransition.map(
-        ({ item, key, props: style }) =>
-          item && (
-            <animated.div key={key} style={style}>
+      {saveModal && (
+        <div className="appearance-modal-enter">
               <Modal
                 title={locales.modal.save.title}
                 description={locales.modal.save.description}
@@ -652,13 +628,10 @@ const Appearance = () => {
                 handleAccept={() => handleSave(true)}
                 handleDecline={() => handleSave(false)}
               />
-            </animated.div>
-          ),
+        </div>
       )}
-      {exitModalTransition.map(
-        ({ item, key, props: style }) =>
-          item && (
-            <animated.div key={key} style={style}>
+      {exitModal && (
+        <div className="appearance-modal-enter">
               <Modal
                 title={locales.modal.exit.title}
                 description={locales.modal.exit.description}
@@ -667,8 +640,7 @@ const Appearance = () => {
                 handleAccept={() => handleExit(true)}
                 handleDecline={() => handleExit(false)}
               />
-            </animated.div>
-          ),
+        </div>
       )}
     </>
   );

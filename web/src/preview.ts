@@ -225,5 +225,5 @@ export const bootPreview = (): void => {
   document.body.classList.add('preview');
   window.setTimeout(() => {
     Nui.emitEvent('appearance_display', { asynchronous: false });
-  }, 50);
+  }, 120);
 };

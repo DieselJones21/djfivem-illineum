@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { mocks } from './mock';
 
 interface Events {
@@ -72,10 +73,6 @@ async function post(event: string, data = {}): Promise<any> {
 }
 
 function onEvent(type: string, func: any): void {
-  if (events[type]) {
-    console.log(`[Nui] Event ${type} is already declared.`);
-    return;
-  }
   events[type] = func;
 }
 
@@ -92,18 +89,28 @@ const Nui = { post, onEvent, emitEvent };
 export default Nui;
 
 export const EventListener = () => {
-  window.addEventListener('message', (e: MessageEvent) => {
-    if (!events[e.data.type]) return;
-    events[e.data.type](e.data.payload);
-  });
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (!events[e.data.type]) return;
+      events[e.data.type](e.data.payload);
+    };
 
-  window.addEventListener('keydown', e => {
-    if (e.key === 'd') {
-      Nui.post('rotate_right');
-    } else if (e.key === 'a') {
-      Nui.post('rotate_left');
-    }
-  });
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'd') {
+        Nui.post('rotate_right');
+      } else if (e.key === 'a') {
+        Nui.post('rotate_left');
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('message', onMessage);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
 
   return null;
 };

@@ -52,4 +52,28 @@ export default createGlobalStyle<{ theme: any }>`
   ::-webkit-scrollbar-thumb:hover {
     background: ${envy.cyan};
   }
+
+  @keyframes envy-appear {
+    from {
+      opacity: 0;
+      transform: translateX(-16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes envy-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .appearance-enter {
+    animation: envy-appear 180ms ease-out both;
+  }
+
+  .appearance-modal-enter {
+    animation: envy-fade 160ms ease-out both;
+  }
 `;
